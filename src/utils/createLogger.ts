@@ -1,39 +1,61 @@
 import winston, { format } from 'winston';
+import { Format } from 'logform';
+import { Env } from '../types';
 
-export const createLogger = (env: Env, shardId: number) => {
+const createLogger = (
+  env: Env,
+  label: string,
+  customFormat: Format,
+  defaultMeta?: any
+) => {
   const defaultFormat = format.combine(
     format.label({
-      label: 'arch-bot'
+      label,
     }),
     format.timestamp({
       format: 'DD-MM-YYYY HH:mm:ss',
     }),
+    format.splat(),
+    format.errors({ stack: true }),
+    customFormat
   );
   const transports: winston.transport[] = [];
 
-  if (env === 'production') {
-    // transports.push(new winston.transports.File({
-    //   dirname: 'logs',
-    //
-    // }));
-  } else {
-    transports.push(new winston.transports.Console({
+  transports.push(
+    new winston.transports.Console({
       handleExceptions: true,
-      format: format.combine(
-        defaultFormat,
-        format.errors({ stack: true }),
-        format.colorize(),
-        format.simple()
-      )
-    }));
-  }
+      format:
+        env === 'production'
+          ? defaultFormat
+          : format.combine(format.colorize(), defaultFormat),
+    })
+  );
 
   return winston.createLogger({
-    level: 'info',
+    level: 'debug',
     format: defaultFormat,
-    defaultMeta: {
-      shard: shardId,
-    },
-    transports
+    defaultMeta,
+    transports,
   });
-}
+};
+
+export const createShardLogger = (env: Env, shardId: number) => {
+  const customFormat = format.printf(
+    ({ timestamp, label, shard, level, message, stack }) => {
+      let str = `[${timestamp} @ ${label}#${shard}] ${level}: ${message}`;
+      if (stack) {
+        str += `\n${stack}`;
+      }
+      return str;
+    }
+  );
+  return createLogger(env, 'arch-bot', customFormat, { shard: shardId });
+};
+
+export const createShardManagerLogger = (env: Env) => {
+  const customFormat = format.printf(
+    ({ timestamp, label, level, message }) =>
+      `[${timestamp} @ ${label}] ${level}: ${message}`
+  );
+  return createLogger(env, 'shard-manager', customFormat);
+};

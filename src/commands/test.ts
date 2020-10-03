@@ -4,7 +4,7 @@ export default createCommand(
   'test',
   'test',
   undefined,
-  (_client, _message, data) => {
-    console.log('executor test', data);
+  (client, _message, data) => {
+    client.logger.debug('executor test', data);
   }
 );

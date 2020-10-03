@@ -2,6 +2,7 @@ import { ShardingManager } from 'discord.js';
 import dotEnvExtended from 'dotenv-extended';
 
 import createArchBot from './createArchBot';
+import { createShardManagerLogger } from './utils/createLogger';
 
 dotEnvExtended.load({
   errorOnMissing: true,
@@ -14,6 +15,8 @@ const token = process.env.DISCORD_TOKEN;
 const mode = process.argv.includes('shard_manager') ? 'shard_manager' : 'shard';
 
 const startSharding = () => {
+  const logger = createShardManagerLogger(env);
+
   let file: string;
   const execArgv: string[] = [];
 
@@ -28,21 +31,24 @@ const startSharding = () => {
     shardArgs: ['shard'],
     execArgv,
     token,
+    totalShards: 3,
   });
 
   manager.on('shardCreate', (shard) => {
-    console.log(`Created shard ${shard.id}`);
+    logger.info('Created shard %s', shard.id);
 
-    shard.on('spawn', () => {
-      shard.send({
-        type: 'shardData',
-        data: shard.id,
-      });
-    });
+    if (env === 'production') {
+      shard.on('spawn', () =>
+        shard.send({
+          type: 'shardData',
+          id: shard.id,
+        })
+      );
+    }
   });
 
   manager.spawn().catch((err) => {
-    console.error('An error occurred while spawning the shards.', err);
+    logger.error('An error occurred while spawning the shards.', err);
   });
 };
 

@@ -1,20 +1,11 @@
 import { Client } from 'discord.js';
 import mongoose from 'mongoose';
-import winston from 'winston';
 
 import { CommandHandler } from './core/command/CommandHandler';
 import { EventListenerHandler } from './core/eventListener/EventListenerHandler';
 import { UnitHandlerOptions } from './core/unit/UnitHandler';
-import { createLogger } from './utils/createLogger';
-
-declare module 'discord.js' {
-  interface Client extends BaseClient {
-    logger: winston.Logger;
-    mongoose: mongoose.Mongoose;
-    commandHandler: CommandHandler;
-    eventListenerHandler: EventListenerHandler;
-  }
-}
+import { createShardLogger } from './utils/createLogger';
+import { Env, ShardData } from './types';
 
 const createHandlerEnvOptions = (
   env: Env,
@@ -27,8 +18,9 @@ const createHandlerEnvOptions = (
 const waitUntilShardData = (): Promise<ShardData> =>
   new Promise((resolve) => {
     process.once('message', (message) => {
-      if (message.type === 'shardData') {
-        resolve(message);
+      const { type, ...data } = message;
+      if (type === 'shardData') {
+        resolve(data);
       }
     });
   });
@@ -36,9 +28,12 @@ const waitUntilShardData = (): Promise<ShardData> =>
 const createArchBot = async (env: Env) => {
   const shardData: ShardData =
     env === 'production' ? await waitUntilShardData() : { id: 0 };
+  const logger = createShardLogger(env, shardData.id);
+
+  logger.debug('Received shard data %s', shardData);
 
   const client = new Client();
-  client.logger = createLogger(env, shardData.id);
+  client.logger = logger;
   client.mongoose = await mongoose.connect(
     `mongodb://${process.env.MONGO_HOST}/${process.env.MONGO_DB}`,
     {
@@ -59,11 +54,11 @@ const createArchBot = async (env: Env) => {
   });
 
   client.commandHandler.on('unitLoaded', (unit) => {
-    console.log('command was loaded', unit.id);
+    client.logger.debug(`Command "${unit.id}' was loaded.`);
   });
 
   client.commandHandler.on('commandExecuted', (command) => {
-    console.log('command executed', command.name);
+    client.logger.debug(`Command "${command.id}" was executed.`);
   });
 
   await client.commandHandler.loadAll();
@@ -75,11 +70,7 @@ const createArchBot = async (env: Env) => {
   );
 
   client.eventListenerHandler.on('unitLoaded', (unit) => {
-    console.log('event listener was loaded', unit.id);
-  });
-
-  client.eventListenerHandler.on('unitUnloaded', (unit) => {
-    console.log('event listener was unloaded', unit.id);
+    client.logger.debug(`Event listener "${unit.id}" was loaded.`);
   });
 
   await client.eventListenerHandler.loadAll();
