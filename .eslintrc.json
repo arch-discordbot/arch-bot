@@ -9,27 +9,23 @@
   },
   "ignorePatterns": [
     "node_modules",
-    "build",
-    "coverage"
+    "build"
   ],
   "plugins": [
     "import",
-    "eslint-comments",
-    "functional"
+    "eslint-comments"
   ],
   "extends": [
     "eslint:recommended",
     "plugin:eslint-comments/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/typescript",
-    "plugin:functional/lite",
     "prettier",
     "prettier/@typescript-eslint"
   ],
   "globals": {
     "BigInt": true,
-    "console": true,
-    "WebAssembly": true
+    "console": true
   },
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -55,9 +51,6 @@
         "ignoreDeclarationSort": true,
         "ignoreCase": true
       }
-    ],
-    "functional/prefer-readonly-type": "off",
-    "functional/no-return-void": "off",
-    "functional/no-throw-statement": "off"
+    ]
   }
 }

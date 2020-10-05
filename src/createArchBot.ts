@@ -1,16 +1,18 @@
-import { Client } from 'discord.js';
+import {
+  AkairoClient,
+  AkairoHandlerOptions,
+  CommandHandler,
+  ListenerHandler,
+} from 'discord-akairo';
 import mongoose from 'mongoose';
 
-import { CommandHandler } from './core/command/CommandHandler';
-import { EventListenerHandler } from './core/eventListener/EventListenerHandler';
-import { UnitHandlerOptions } from './core/unit/UnitHandler';
-import { createShardLogger } from './utils/createLogger';
 import { Env, ShardData } from './types';
+import { createShardLogger } from './utils/createLogger';
 
 const createHandlerEnvOptions = (
   env: Env,
   directory: string
-): UnitHandlerOptions => ({
+): AkairoHandlerOptions => ({
   extensions: env === 'production' ? ['.js'] : ['.ts'],
   directory: env === 'production' ? `build/${directory}` : `src/${directory}`,
 });
@@ -32,7 +34,9 @@ const createArchBot = async (env: Env) => {
 
   logger.debug('Received shard data %s', shardData);
 
-  const client = new Client();
+  const client = new AkairoClient({
+    ownerID: process.env.OWNER_ID,
+  });
   client.logger = logger;
   client.mongoose = await mongoose.connect(
     `mongodb://${process.env.MONGO_HOST}/${process.env.MONGO_DB}`,
@@ -42,38 +46,36 @@ const createArchBot = async (env: Env) => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     }
   );
 
   client.commandHandler = new CommandHandler(client, {
     ...createHandlerEnvOptions(env, 'commands'),
+    prefix: ['a!', 'arch'],
+    allowMention: true,
     blockBots: true,
-    allowMentionPrefix: true,
-    prefix: '!',
-    rerunOnEdit: true,
   });
 
-  client.commandHandler.on('unitLoaded', (unit) => {
-    client.logger.debug(`Command "${unit.id}' was loaded.`);
-  });
-
-  client.commandHandler.on('commandExecuted', (command) => {
-    client.logger.debug(`Command "${command.id}" was executed.`);
-  });
-
-  await client.commandHandler.loadAll();
-  client.commandHandler.initialize();
-
-  client.eventListenerHandler = new EventListenerHandler(
+  client.listenerHandler = new ListenerHandler(
     client,
-    createHandlerEnvOptions(env, 'eventListeners')
+    createHandlerEnvOptions(env, 'listeners')
   );
-
-  client.eventListenerHandler.on('unitLoaded', (unit) => {
-    client.logger.debug(`Event listener "${unit.id}" was loaded.`);
+  client.listenerHandler.setEmitters({
+    commandHandler: client.commandHandler,
+    listenerHandler: client.listenerHandler,
   });
 
-  await client.eventListenerHandler.loadAll();
+  client.commandHandler.useListenerHandler(client.listenerHandler);
+
+  client.listenerHandler.loadAll(
+    `${client.listenerHandler.directory}/listenerHandler`
+  );
+  client.listenerHandler.loadAll(
+    `${client.listenerHandler.directory}/commandHandler`
+  );
+  client.listenerHandler.loadAll(`${client.listenerHandler.directory}/client`);
+  client.commandHandler.loadAll();
 
   return client;
 };

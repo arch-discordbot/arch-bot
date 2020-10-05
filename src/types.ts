@@ -1,14 +1,13 @@
-import winston from 'winston';
+import { Client } from 'discord.js';
 import mongoose from 'mongoose';
-import { CommandHandler } from './core/command/CommandHandler';
-import { EventListenerHandler } from './core/eventListener/EventListenerHandler';
+import winston from 'winston';
 
-declare module 'discord.js' {
-  interface Client extends BaseClient {
+declare module 'discord-akairo' {
+  interface AkairoClient extends Client {
     logger: winston.Logger;
     mongoose: mongoose.Mongoose;
     commandHandler: CommandHandler;
-    eventListenerHandler: EventListenerHandler;
+    listenerHandler: ListenerHandler;
   }
 }
 

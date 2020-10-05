@@ -1,12 +1,13 @@
-import winston, { format } from 'winston';
 import { Format } from 'logform';
+import winston, { format } from 'winston';
+
 import { Env } from '../types';
 
 const createLogger = (
   env: Env,
   label: string,
   customFormat: Format,
-  defaultMeta?: any
+  defaultMeta?: unknown
 ) => {
   const defaultFormat = format.combine(
     format.label({
