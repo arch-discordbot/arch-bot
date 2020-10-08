@@ -1,17 +1,10 @@
 import { ShardingManager } from 'discord.js';
-import dotEnvExtended from 'dotenv-extended';
 
 import createArchBot from './createArchBot';
 import { createShardManagerLogger } from './utils/createLogger';
+import { env, bot } from './config';
 
-dotEnvExtended.load({
-  errorOnMissing: true,
-  errorOnRegex: true,
-});
-
-const env =
-  process.env.NODE_ENV === 'production' ? 'production' : 'development';
-const token = process.env.DISCORD_TOKEN;
+const token = bot.token;
 const mode = process.argv.includes('shard_manager') ? 'shard_manager' : 'shard';
 
 const startSharding = () => {
@@ -31,7 +24,6 @@ const startSharding = () => {
     shardArgs: ['shard'],
     execArgv,
     token,
-    totalShards: 3,
   });
 
   manager.on('shardCreate', (shard) => {

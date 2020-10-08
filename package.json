@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "NODE_ENV=development ts-node src/index.ts",
-    "start": "run-s build && NODE_ENV=production node build/index.js shard_manager",
+    "start": "NODE_ENV=production node build/index.js shard_manager",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
     "fix:lint": "eslint src --ext .ts --fix",
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@types/mongoose": "^5.7.36",
+    "@types/node": "^14.11.5",
     "@types/ws": "^7.2.6",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",

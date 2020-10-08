@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 
 import { Env, ShardData } from './types';
 import { createShardLogger } from './utils/createLogger';
+import * as config from './config';
 
 const createHandlerEnvOptions = (
   env: Env,
@@ -35,14 +36,14 @@ const createArchBot = async (env: Env) => {
   logger.debug('Received shard data %s', shardData);
 
   const client = new AkairoClient({
-    ownerID: process.env.OWNER_ID,
+    ownerID: config.bot.ownerId,
   });
   client.logger = logger;
   client.mongoose = await mongoose.connect(
-    `mongodb://${process.env.MONGO_HOST}/${process.env.MONGO_DB}`,
+    `mongodb://${config.database.host}/${config.database.db}`,
     {
-      user: process.env.MONGO_USER,
-      pass: process.env.MONGO_PASS,
+      user: config.database.user,
+      pass: config.database.pass,
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,

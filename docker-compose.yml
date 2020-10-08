@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+
+  bot:
+    container_name: arch-bot
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - arch-network
+
+  mongo:
+    container_name: mongo
+    image: 'mongo'
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data
+    ports:
+      - '27017:27017'
+    networks:
+      - arch-network
+
+volumes:
+  mongo-data:
+
+networks:
+  arch-network:
+    driver: bridge
+
