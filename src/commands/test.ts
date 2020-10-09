@@ -8,7 +8,5 @@ export default class TestCommand extends Command {
     });
   }
 
-  async exec() {
-
-  }
+  async exec() {}
 }

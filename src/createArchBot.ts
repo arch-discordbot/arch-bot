@@ -6,9 +6,9 @@ import {
 } from 'discord-akairo';
 import mongoose from 'mongoose';
 
+import * as config from './config';
 import { Env, ShardData } from './types';
 import { createShardLogger } from './utils/createLogger';
-import * as config from './config';
 
 const createHandlerEnvOptions = (
   env: Env,

@@ -1,8 +1,8 @@
 import { ShardingManager } from 'discord.js';
 
+import { bot, env } from './config';
 import createArchBot from './createArchBot';
 import { createShardManagerLogger } from './utils/createLogger';
-import { env, bot } from './config';
 
 const token = bot.token;
 const mode = process.argv.includes('shard_manager') ? 'shard_manager' : 'shard';
