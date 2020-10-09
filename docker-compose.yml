@@ -7,8 +7,8 @@ services:
     build: .
     restart: unless-stopped
     env_file: .env
-    networks:
-      - arch-network
+    depends_on:
+      - mongo
 
   mongo:
     container_name: mongo
@@ -18,13 +18,8 @@ services:
       - mongo-data:/data
     ports:
       - '27017:27017'
-    networks:
-      - arch-network
+    logging:
+      driver: none
 
 volumes:
   mongo-data:
-
-networks:
-  arch-network:
-    driver: bridge
-
