@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+
+  bot:
+    build:
+      dockerfile: Dockerfile.dev
+    image: arch:bot-dev
+    volumes:
+      - ./src:/bot/src/
+      - ./node_modules:/bot/node_modules/
+
+  mongo:
+    ports:
+      - "27017:27017"
+    logging:
+      driver: json-file

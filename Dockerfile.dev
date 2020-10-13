@@ -1,0 +1,10 @@
+FROM node:14-alpine
+
+WORKDIR /bot/
+
+COPY package.json yarn.lock ./
+
+COPY tsconfig.json .
+COPY ./src/ ./src/
+
+CMD yarn dev:watch
