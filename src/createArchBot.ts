@@ -38,6 +38,7 @@ const createArchBot = async (env: Env) => {
   const client = new AkairoClient({
     ownerID: config.bot.ownerId,
   });
+  client.shardData = shardData;
   client.logger = logger;
   client.mongoose = await mongoose.connect(
     `mongodb://${config.database.host}/${config.database.db}`,

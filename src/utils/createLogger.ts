@@ -33,7 +33,7 @@ const createLogger = (
   );
 
   return winston.createLogger({
-    level: 'debug',
+    level: env === 'production' ? 'info' : 'debug',
     format: defaultFormat,
     defaultMeta,
     transports,

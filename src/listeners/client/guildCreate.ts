@@ -1,7 +1,7 @@
 import { Listener } from 'discord-akairo';
 import { Guild } from 'discord.js';
 
-import { ArchGuildModel } from '../../models/ArchGuildModel';
+import { ArchGuildModel } from '../../database/models/ArchGuildModel';
 
 export default class GuildCreateListener extends Listener {
   constructor() {

@@ -4,6 +4,7 @@ import winston from 'winston';
 
 declare module 'discord-akairo' {
   interface AkairoClient extends Client {
+    shardData: ShardData;
     logger: winston.Logger;
     mongoose: mongoose.Mongoose;
     commandHandler: CommandHandler;
