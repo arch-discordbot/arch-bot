@@ -53,15 +53,20 @@ export default class UserCommand extends Command {
   async buildEmbed(author: GuildMember, target: GuildMember | User) {
     const targetUser = target instanceof GuildMember ? target.user : target;
     const embed = new MessageEmbed();
-
     embed.setColor(this.resolveColor(author, target));
+    embed.setThumbnail(
+      targetUser.displayAvatarURL({
+        size: 2048,
+        dynamic: true,
+      })
+    );
 
     embed.addField(
       'Account information',
       stripIndents(inlineLists`
         **ID:** ${targetUser.id}
         **Username:** ${targetUser.username}#${targetUser.discriminator}
-        **Creation date:** ${formatDate(targetUser.createdAt)} ()
+        **Creation date:** ${formatDate(targetUser.createdAt)}
         **Avatar URLs:** ${this.buildAvatarUrls(targetUser)}
       `)
     );
@@ -98,7 +103,7 @@ export default class UserCommand extends Command {
 
       if (target.roles.cache.size > 0) {
         const roles = target.roles.cache.map((role) => role.toString());
-        infos.push(`
+        infos.push(`\n
           **Roles:** ${roles}`);
       }
 
