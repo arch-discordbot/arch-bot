@@ -37,6 +37,7 @@ const createArchBot = async (env: Env) => {
 
   const client = new AkairoClient({
     ownerID: config.bot.ownerId,
+    disableMentions: 'everyone',
   });
   client.shardData = shardData;
   client.logger = logger;
