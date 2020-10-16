@@ -68,13 +68,12 @@ export default class GuildCommand extends Command {
       target.premiumSubscriptionCount || 0
     }**)`);
 
+    embed.setDescription(stripIndents(inlineLists(infos.join(''))));
+
     if (target.roles.cache.size > 0) {
       const roles = target.roles.cache.map((role) => role.toString());
-      infos.push(`\n
-          **Roles:** ${roles}`);
+      embed.addField('Roles', roles.join());
     }
-
-    embed.setDescription(stripIndents(inlineLists(infos.join(''))));
 
     return embed;
   }
