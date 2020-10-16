@@ -1,6 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Message, MessageEmbed } from 'discord.js';
 import { formatDate, formatNumber } from '../utils/formatting';
+import { env } from '../config';
 
 export default class StatsCommand extends Command {
   constructor() {
@@ -27,7 +28,11 @@ export default class StatsCommand extends Command {
     const guildsCount = await this.countClientProperty('guilds.cache.size');
     const usersCount = await this.countClientProperty('users.cache.size');
 
-    embed.addField('Shard', this.client.shardData.id, true);
+    embed.addField(
+      'Shard',
+      `${this.client.shardData.id}/${this.client.shard?.count || 1}`,
+      true
+    );
     embed.addField('Commands', commandsCount, true);
     embed.addField('RAM', `${formatNumber(memoryUsage)} MB`, true);
     embed.addField(
@@ -40,6 +45,7 @@ export default class StatsCommand extends Command {
       formatNumber(usersCount, undefined, { maximumFractionDigits: 0 }),
       true
     );
+    embed.addField('Environment', env === 'production' ? 'PROD' : 'DEV', true);
 
     return embed;
   }
