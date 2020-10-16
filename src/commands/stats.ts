@@ -1,5 +1,5 @@
 import { Command } from 'discord-akairo';
-import { Message, MessageEmbed } from 'discord.js';
+import { Client, Message, MessageEmbed } from 'discord.js';
 import { formatDate, formatNumber } from '../utils/formatting';
 import { env } from '../config';
 
@@ -25,8 +25,8 @@ export default class StatsCommand extends Command {
       embed.setDescription(`Online since ${formatDate(this.client.readyAt)}`);
     }
 
-    const guildsCount = await this.countClientProperty('guilds.cache.size');
-    const usersCount = await this.countClientProperty('users.cache.size');
+    const guildsCount = await this.calculateGuildCount();
+    const usersCount = await this.calculateUserCount();
 
     embed.addField(
       'Shard',
@@ -50,19 +50,34 @@ export default class StatsCommand extends Command {
     return embed;
   }
 
-  async countClientProperty(path: string) {
+  async calculateGuildCount() {
     let count: number;
 
     if (this.client.shard !== null) {
-      const values = await this.client.shard.fetchClientValues(path);
+      const values = await this.client.shard.fetchClientValues(
+        'guilds.cache.size'
+      );
       count = values.reduce((value, next) => value + next, 0);
     } else {
-      count = path
-        .split('.')
-        .reduce(
-          (obj: any, prop) => (obj && obj[prop] ? obj[prop] : null),
-          this.client
-        );
+      count = this.client.guilds.cache.size;
+    }
+
+    return count;
+  }
+
+  async calculateUserCount() {
+    let count: number;
+
+    const countGuildMembers = (client: Client) =>
+      client.guilds.cache.reduce((prev, guild) => prev + guild.memberCount, 0);
+
+    if (this.client.shard !== null) {
+      const values = await this.client.shard.broadcastEval(`
+        (${countGuildMembers.toString()})(this)
+      `);
+      count = values.reduce((value, next) => value + next, 0);
+    } else {
+      count = countGuildMembers(this.client);
     }
 
     return count;
