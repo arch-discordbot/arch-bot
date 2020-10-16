@@ -10,5 +10,10 @@ export default class ReadyListener extends Listener {
 
   exec() {
     this.client.logger.info(`Logged in as ${this.client.user?.tag}`);
+
+    this.client.user?.setActivity({
+      type: 'WATCHING',
+      name: 'for a! or arch',
+    });
   }
 }
