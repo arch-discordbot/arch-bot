@@ -33,7 +33,7 @@ const startSharding = () => {
       shard.on('spawn', () =>
         shard.send({
           type: 'shardData',
-          id: shard.id,
+          id: shard.id + 1,
         })
       );
     }

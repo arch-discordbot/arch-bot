@@ -30,7 +30,7 @@ const waitUntilShardData = (): Promise<ShardData> =>
 
 const createArchBot = async (env: Env) => {
   const shardData: ShardData =
-    env === 'production' ? await waitUntilShardData() : { id: 0 };
+    env === 'production' ? await waitUntilShardData() : { id: 1 };
   const logger = createShardLogger(env, shardData.id);
 
   logger.debug('Received shard data %s', shardData);
