@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "@typegoose/typegoose": "^7.4.1",
+    "common-tags": "^1.8.0",
+    "date-fns": "^2.16.1",
     "discord-akairo": "^8.1.0",
     "discord.js": "^12.3.1",
     "dotenv-extended": "^2.9.0",
@@ -31,6 +33,7 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "@types/common-tags": "^1.8.0",
     "@types/mongoose": "^5.7.36",
     "@types/node": "^14.11.5",
     "@types/ws": "^7.2.6",
@@ -78,8 +81,13 @@
     ]
   },
   "nodemonConfig": {
-    "ignore": ["node_modules/*", "build/*"],
-    "watch": ["src/*"],
+    "ignore": [
+      "node_modules/*",
+      "build/*"
+    ],
+    "watch": [
+      "src/*"
+    ],
     "ext": "ts",
     "exec": "yarn run dev"
   }

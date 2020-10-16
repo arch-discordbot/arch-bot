@@ -1,5 +1,13 @@
 import { Argument, Command } from 'discord-akairo';
-import { GuildMember, Message, MessageEmbed, User } from 'discord.js';
+import {
+  GuildMember,
+  ImageSize,
+  Message,
+  MessageEmbed,
+  User,
+} from 'discord.js';
+import { inlineLists, stripIndents } from 'common-tags';
+import { formatDate } from '../utils/formatting';
 
 export default class UserCommand extends Command {
   constructor() {
@@ -9,25 +17,96 @@ export default class UserCommand extends Command {
       args: [
         {
           id: 'target',
-          type: Argument.union('member', 'user'),
+          type: Argument.union('member', 'user', 'string'),
           default: (message: Message) => message.member || message.author,
         },
       ],
+      typing: true,
     });
   }
 
-  async exec(message: Message, args: { target: GuildMember | User }) {
-    const author = message.member!;
-    message.channel.send(await this.buildEmbed(author, args.target));
+  async exec(message: Message, args: { target: GuildMember | User | string }) {
+    if (!message.member || message.channel.type !== 'text') {
+      return;
+    }
+
+    const { channel } = message;
+    let { target } = args;
+
+    if (typeof target === 'string') {
+      try {
+        target = await this.client.users.fetch(target, false, true);
+      } catch (error: any) {
+        this.client.logger.error({
+          message: 'An error occurred while trying to fetch the user %s',
+          splat: [target],
+          stack: error,
+        });
+
+        return channel.send('User not found.');
+      }
+    }
+
+    return channel.send(await this.buildEmbed(message.member, target));
   }
 
   async buildEmbed(author: GuildMember, target: GuildMember | User) {
+    const targetUser = target instanceof GuildMember ? target.user : target;
     const embed = new MessageEmbed();
 
     embed.setColor(this.resolveColor(author, target));
-    embed.setDescription(
-      target instanceof GuildMember ? target.displayName : target.username
+
+    embed.addField(
+      'Account information',
+      stripIndents(inlineLists`
+        **ID:** ${targetUser.id}
+        **Username:** ${targetUser.username}#${targetUser.discriminator}
+        **Creation date:** ${formatDate(targetUser.createdAt)} ()
+        **Avatar URLs:** ${this.buildAvatarUrls(targetUser)}
+      `)
     );
+
+    if (target instanceof GuildMember) {
+      const infos: string[] = [];
+
+      if (target.guild.ownerID === target.id) {
+        infos.push(`
+          This user owns this guild.
+          **Creation date:** ${formatDate(target.guild.createdAt)}`);
+      } else {
+        infos.push(
+          `**Join date:** ${formatDate(
+            target.joinedAt!
+          )} (**#${this.calculatePosition(target, 'joinedTimestamp')}**)`
+        );
+      }
+
+      if (target.nickname) {
+        infos.push(`
+          **Nickname:** ${target.nickname}`);
+      }
+
+      if (target.premiumSince) {
+        infos.push(`
+          **Boost date:** ${formatDate(
+            target.premiumSince
+          )} (**#${this.calculatePosition(
+          target,
+          'premiumSinceTimestamp'
+        )}**)`);
+      }
+
+      if (target.roles.cache.size > 0) {
+        const roles = target.roles.cache.map((role) => role.toString());
+        infos.push(`
+          **Roles:** ${roles}`);
+      }
+
+      embed.addField(
+        'Guild member information',
+        stripIndents(inlineLists(infos.join('')))
+      );
+    }
 
     return embed;
   }
@@ -36,5 +115,33 @@ export default class UserCommand extends Command {
     return target instanceof GuildMember
       ? target.displayColor
       : author.displayColor;
+  }
+
+  buildAvatarUrls(user: User) {
+    const sizes: ImageSize[] = [128, 256, 512, 1024, 2048, 4096];
+    return sizes.map(
+      (size) =>
+        `[[${size}x](${user.displayAvatarURL({
+          dynamic: true,
+          size: size,
+          format: 'png',
+        })})]`
+    );
+  }
+
+  calculatePosition(member: GuildMember, property: keyof GuildMember) {
+    return (
+      member.guild.members.cache
+        .filter((guildMember) => {
+          const value = guildMember[property];
+          return typeof value === 'number' && value > 0;
+        })
+        .map((guildMember) => ({
+          id: guildMember.id,
+          value: guildMember[property] as number,
+        }))
+        .sort((first, second) => first.value - second.value)
+        .findIndex((guildMember) => guildMember.id === member.id) + 1
+    );
   }
 }
