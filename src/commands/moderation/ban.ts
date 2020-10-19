@@ -7,6 +7,7 @@ export default class BanCommand extends Command {
       aliases: ['ban'],
       channel: 'guild',
       userPermissions: ['BAN_MEMBERS'],
+      clientPermissions: ['BAN_MEMBERS'],
       args: [
         {
           id: 'target',
@@ -17,15 +18,49 @@ export default class BanCommand extends Command {
     });
   }
 
-  exec(message: Message, args: { target: GuildMember | User | string | null }) {
-    const { channel, member } = message;
-
-    if (!member!.hasPermission('BAN_MEMBERS')) {
-      return channel.send('no permissions');
+  async exec(
+    message: Message,
+    args: { target: GuildMember | User | string | null }
+  ) {
+    if (!message.guild || message.channel.type !== 'text') {
+      return;
     }
 
-    if (!args.target) {
-      return channel.send('Please specify a target');
+    const { guild, channel, member } = message;
+    const { target } = args;
+
+    if (!member) {
+      return;
+    }
+
+    if (!member.hasPermission('BAN_MEMBERS')) {
+      return;
+    }
+
+    if (!target) {
+      return channel.send('Please specify a target user.');
+    }
+
+    if (target instanceof GuildMember) {
+      if (!target.bannable) {
+        return channel.send(
+          "I don't have enough permissions to ban this guild member."
+        );
+      }
+    }
+
+    try {
+      await guild.members.ban(target, {
+        reason: `Banned by ${member.toString()} with reason "none"`,
+      });
+    } catch (error: any) {
+      this.client.logger.error({
+        message: 'An error occurred while trying to ban the user %s',
+        splat: [typeof target === 'string' ? target : target.id],
+        stack: error,
+      });
+
+      return channel.send('An error occurred while trying to ban this user.');
     }
 
     return channel.send(`user was banned`);
