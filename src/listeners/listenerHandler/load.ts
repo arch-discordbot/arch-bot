@@ -10,7 +10,7 @@ export default class LoadListener extends Listener {
 
   exec(listener: Listener) {
     this.client.logger.debug(
-      `Listener "${listener.event}@${listener.emitter}" was loaded.`
+      'Listener "%s" was loaded.', `${listener.event}@${listener.emitter}`
     );
   }
 }

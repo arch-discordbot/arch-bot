@@ -12,7 +12,7 @@ export default class GuildCreateListener extends Listener {
   }
 
   async exec(guild: Guild) {
-    this.client.logger.debug(`Joined guild ID ${guild.id}`);
+    this.client.logger.debug('Joined guild ID %s', guild.id);
 
     const archGuild = await ArchGuildModel.findOrCreate(guild);
 

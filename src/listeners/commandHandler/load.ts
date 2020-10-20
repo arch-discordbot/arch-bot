@@ -9,6 +9,6 @@ export default class LoadListener extends Listener {
   }
 
   exec(command: Command) {
-    this.client.logger.debug(`Command "${command.id}" was loaded.`);
+    this.client.logger.debug('Command "%s" was loaded.', command.id);
   }
 }

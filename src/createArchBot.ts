@@ -33,7 +33,7 @@ const createArchBot = async (env: Env) => {
     env === 'production' ? await waitUntilShardData() : { id: 1 };
   const logger = createShardLogger(env, shardData.id);
 
-  logger.debug('Received shard data %s', shardData);
+  logger.info('Received shard data %s', shardData);
 
   const client = new AkairoClient({
     ownerID: config.bot.ownerId,
