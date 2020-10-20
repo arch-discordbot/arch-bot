@@ -35,6 +35,7 @@ export default class UserCommand extends Command {
     const { channel } = message;
     let { target } = args;
 
+    // TODO: fetch not cached members/users.
     if (typeof target === 'string') {
       return channel.send('User not found.');
     }

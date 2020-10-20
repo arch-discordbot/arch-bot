@@ -24,6 +24,7 @@ export default class AvatarCommand extends Command {
 
     const { member, channel } = message;
 
+    // TODO: fetch not cached members/users.
     if (typeof args.target === 'string') {
       return channel.send('User not found.');
     }
