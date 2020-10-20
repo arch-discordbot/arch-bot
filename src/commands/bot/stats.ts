@@ -18,15 +18,15 @@ export default class StatsCommand extends Command {
   async buildEmbed() {
     const embed = new MessageEmbed();
 
-    const commandsCount = this.client.commandHandler.modules.size;
-    const memoryUsage = process.memoryUsage().heapUsed / (1024 * 1024);
-
     if (this.client.readyAt) {
       embed.setDescription(`Online since ${formatDate(this.client.readyAt)}`);
     }
 
+    const commandsCount = this.client.commandHandler.modules.size;
+    const memoryUsage = process.memoryUsage().heapUsed / (1024 * 1024);
     const guildsCount = await this.calculateGuildCount();
-    const usersCount = await this.calculateUserCount();
+    const totalUsersCount = await this.calculateUserCount();
+    const cachedUsersCount = this.client.users.cache.size;
 
     embed.addField(
       'Shard',
@@ -35,16 +35,9 @@ export default class StatsCommand extends Command {
     );
     embed.addField('Commands', commandsCount, true);
     embed.addField('RAM', `${formatNumber(memoryUsage)} MB`, true);
-    embed.addField(
-      'Guilds',
-      formatNumber(guildsCount, undefined, { maximumFractionDigits: 0 }),
-      true
-    );
-    embed.addField(
-      'Users',
-      formatNumber(usersCount, undefined, { maximumFractionDigits: 0 }),
-      true
-    );
+    embed.addField('Guilds', formatNumber(guildsCount), true);
+    embed.addField('Total Users', formatNumber(totalUsersCount), true);
+    embed.addField('Cached Users', formatNumber(cachedUsersCount), true);
     embed.addField('Environment', env === 'production' ? 'PROD' : 'DEV', true);
 
     return embed;

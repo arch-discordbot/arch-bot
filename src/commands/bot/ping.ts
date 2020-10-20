@@ -16,16 +16,10 @@ export default class PingCommand extends Command {
       (message.editedAt || message.createdAt).getTime();
 
     const embed = new MessageEmbed();
-    embed.addField(
-      'API',
-      `${formatNumber(diff, undefined, { maximumFractionDigits: 0 })}ms`,
-      true
-    );
+    embed.addField('API', `${formatNumber(diff)}ms`, true);
     embed.addField(
       'WS',
-      `${formatNumber(Math.floor(this.client.ws.ping), undefined, {
-        maximumFractionDigits: 0,
-      })}ms`,
+      `${formatNumber(Math.floor(this.client.ws.ping))}ms`,
       true
     );
 
