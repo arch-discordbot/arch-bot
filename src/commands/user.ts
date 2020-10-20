@@ -8,6 +8,7 @@ import {
 } from 'discord.js';
 import { inlineLists, stripIndents } from 'common-tags';
 import { formatDate } from '../utils/formatting';
+import { getEmbedColor } from '../utils/embeds';
 import { formatDistanceToNow } from 'date-fns';
 
 export default class UserCommand extends Command {
@@ -35,17 +36,7 @@ export default class UserCommand extends Command {
     let { target } = args;
 
     if (typeof target === 'string') {
-      try {
-        target = await this.client.users.fetch(target, false, true);
-      } catch (error: any) {
-        this.client.logger.error({
-          message: 'An error occurred while trying to fetch the user %s',
-          splat: [target],
-          stack: error,
-        });
-
-        return channel.send('User not found.');
-      }
+      return channel.send('User not found.');
     }
 
     return channel.send(await this.buildEmbed(message.member, target));
@@ -54,7 +45,7 @@ export default class UserCommand extends Command {
   async buildEmbed(author: GuildMember, target: GuildMember | User) {
     const targetUser = target instanceof GuildMember ? target.user : target;
     const embed = new MessageEmbed();
-    embed.setColor(this.resolveColor(author, target));
+    embed.setColor(getEmbedColor(target, author.displayColor));
     embed.setThumbnail(
       targetUser.displayAvatarURL({
         size: 2048,
@@ -122,12 +113,6 @@ export default class UserCommand extends Command {
     }
 
     return embed;
-  }
-
-  resolveColor(author: GuildMember, target: GuildMember | User) {
-    return target instanceof GuildMember
-      ? target.displayColor
-      : author.displayColor;
   }
 
   buildAvatarUrls(user: User) {
