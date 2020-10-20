@@ -14,8 +14,10 @@ export class ArchGuild extends Base<Snowflake> {
   public _id!: Snowflake;
   @prop({ required: true })
   public name!: string;
-  @prop({ default: '!', type: () => String })
-  public prefix = '!';
+  @prop({ default: 'a!', type: () => String })
+  public prefix = 'a!';
+  @prop({ default: 'en-US', type: () => String })
+  public locale = 'en-US';
 }
 
 export const ArchGuildModel = getModelForClass(ArchGuild);
