@@ -35,13 +35,7 @@ const createArchBot = async (env: Env) => {
 
   logger.info('Received shard data %s', shardData);
 
-  const client = new AkairoClient({
-    ownerID: config.bot.ownerId,
-    disableMentions: 'everyone',
-  });
-  client.shardData = shardData;
-  client.logger = logger;
-  client.mongoose = await mongoose.connect(
+  const database = await mongoose.connect(
     `mongodb://${config.database.host}/${config.database.db}`,
     {
       user: config.database.user,
@@ -52,6 +46,14 @@ const createArchBot = async (env: Env) => {
       useFindAndModify: false,
     }
   );
+
+  const client = new AkairoClient({
+    ownerID: config.bot.ownerId, //TODO: maybe fetch from database
+    disableMentions: 'everyone',
+  });
+  client.shardData = shardData;
+  client.logger = logger;
+  client.mongoose = database;
 
   client.commandHandler = new CommandHandler(client, {
     ...createHandlerEnvOptions(env, 'commands'),
