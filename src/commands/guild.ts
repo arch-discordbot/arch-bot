@@ -6,7 +6,7 @@ import {
   Message,
   MessageEmbed,
 } from 'discord.js';
-import { inlineLists, stripIndents } from 'common-tags';
+import { stripIndents } from 'common-tags';
 import { formatDate } from '../utils/formatting';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -55,7 +55,7 @@ export default class GuildCommand extends Command {
 
     if (target.icon) {
       infos.push(`
-        **Icon URLs:** ${this.buildUrls(target, 'iconURL')}`);
+        **Icon URLs:** ${this.buildUrls(target, 'iconURL').join(' ')}`);
     } else {
       infos.push(`
         **Acronym:** ${target.nameAcronym}`);
@@ -63,7 +63,7 @@ export default class GuildCommand extends Command {
 
     if (target.banner) {
       infos.push(`
-        **Banner URLs:** ${this.buildUrls(target, 'bannerURL')}`);
+        **Banner URLs:** ${this.buildUrls(target, 'bannerURL').join(' ')}`);
     }
 
     infos.push(`
@@ -71,7 +71,7 @@ export default class GuildCommand extends Command {
       target.premiumSubscriptionCount || 0
     }**)`);
 
-    embed.setDescription(stripIndents(inlineLists(infos.join(''))));
+    embed.setDescription(stripIndents(infos.join('')));
 
     if (target.roles.cache.size > 0) {
       const roles = target.roles.cache.map((role) => role.toString());
