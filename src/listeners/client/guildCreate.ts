@@ -14,19 +14,7 @@ export default class GuildCreateListener extends Listener {
   async exec(guild: Guild) {
     this.client.logger.debug(`Joined guild ID ${guild.id}`);
 
-    const archGuild = await ArchGuildModel.findOneAndUpdate(
-      { _id: guild.id },
-      {
-        $set: {
-          _id: guild.id,
-          name: guild.name,
-        },
-        $setOnInsert: {
-          prefix: 'a!',
-        },
-      },
-      { upsert: true, new: true }
-    );
+    const archGuild = await ArchGuildModel.findOrCreate(guild);
 
     this.client.logger.debug('archGuild: %s', archGuild);
   }

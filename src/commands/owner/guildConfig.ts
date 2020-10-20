@@ -32,7 +32,7 @@ export default class GuildConfigCommand extends Command {
       const dmChannel = await message.author.createDM();
       dmChannel.send({
         content: JSON.stringify(config, undefined, 2),
-        code: true
+        code: true,
       });
       await dmChannel.delete();
 

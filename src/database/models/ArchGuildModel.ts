@@ -1,6 +1,16 @@
-import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import {
+  getModelForClass,
+  modelOptions,
+  prop,
+  ReturnModelType,
+} from '@typegoose/typegoose';
+import { MatchKeysAndValues } from 'mongodb';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import { Snowflake } from 'discord.js';
+import { Guild, Snowflake } from 'discord.js';
+
+const DEFAULT_CONFIG: MatchKeysAndValues<ArchGuild> = {
+  prefix: 'a!',
+};
 
 @modelOptions({
   schemaOptions: {
@@ -18,6 +28,23 @@ export class ArchGuild extends Base<Snowflake> {
   public prefix = 'a!';
   @prop({ default: 'en-US', type: () => String })
   public locale = 'en-US';
+
+  public static async findOrCreate(
+    this: ReturnModelType<typeof ArchGuild>,
+    guild: Guild
+  ) {
+    return this.findOneAndUpdate(
+      { _id: guild.id },
+      {
+        $set: {
+          _id: guild.id,
+          name: guild.name,
+        },
+        $setOnInsert: DEFAULT_CONFIG,
+      },
+      { upsert: true, new: true }
+    );
+  }
 }
 
 export const ArchGuildModel = getModelForClass(ArchGuild);
