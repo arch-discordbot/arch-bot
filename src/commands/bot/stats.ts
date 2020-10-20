@@ -1,7 +1,7 @@
 import { Command } from 'discord-akairo';
 import { Client, Message, MessageEmbed } from 'discord.js';
-import { formatDate, formatNumber } from '../utils/formatting';
-import { env } from '../config';
+import { formatDate, formatNumber } from '../../utils/formatting';
+import { env } from '../../config';
 
 export default class StatsCommand extends Command {
   constructor() {

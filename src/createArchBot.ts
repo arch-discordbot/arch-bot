@@ -58,6 +58,7 @@ const createArchBot = async (env: Env) => {
     prefix: ['a!', 'arch'],
     allowMention: true,
     blockBots: true,
+    automateCategories: true
   });
 
   client.listenerHandler = new ListenerHandler(

@@ -1,6 +1,6 @@
 import { Argument, Command } from 'discord-akairo';
 import { GuildMember, Message, MessageEmbed, User } from 'discord.js';
-import { getEmbedColor } from '../utils/embeds';
+import { getEmbedColor } from '../../utils/embeds';
 
 export default class AvatarCommand extends Command {
   constructor() {

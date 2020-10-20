@@ -1,6 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Message, MessageEmbed } from 'discord.js';
-import { formatNumber } from '../utils/formatting';
+import { formatNumber } from '../../utils/formatting';
 
 export default class PingCommand extends Command {
   constructor() {

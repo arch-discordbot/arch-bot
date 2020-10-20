@@ -7,7 +7,7 @@ import {
   MessageEmbed,
 } from 'discord.js';
 import { stripIndents } from 'common-tags';
-import { formatDate } from '../utils/formatting';
+import { formatDate } from '../../utils/formatting';
 import { formatDistanceToNow } from 'date-fns';
 
 export default class GuildCommand extends Command {

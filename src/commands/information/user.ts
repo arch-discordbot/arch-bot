@@ -7,8 +7,8 @@ import {
   User,
 } from 'discord.js';
 import { inlineLists, stripIndents } from 'common-tags';
-import { formatDate } from '../utils/formatting';
-import { getEmbedColor } from '../utils/embeds';
+import { formatDate } from '../../utils/formatting';
+import { getEmbedColor } from '../../utils/embeds';
 import { formatDistanceToNow } from 'date-fns';
 
 export default class UserCommand extends Command {
