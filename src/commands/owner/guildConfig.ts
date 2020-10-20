@@ -1,6 +1,6 @@
 import { Argument, Command } from 'discord-akairo';
 import { Guild, Message } from 'discord.js';
-import { ArchGuildModel } from '../../database/models/ArchGuildModel';
+import { GuildConfigModel } from '../../database/models/GuildConfigModel';
 
 export default class GuildConfigCommand extends Command {
   constructor() {
@@ -26,7 +26,7 @@ export default class GuildConfigCommand extends Command {
     }
 
     const guildId = target instanceof Guild ? target.id : target;
-    const config = await ArchGuildModel.findById(guildId);
+    const config = await GuildConfigModel.findById(guildId);
 
     try {
       const dmChannel = await message.author.createDM();

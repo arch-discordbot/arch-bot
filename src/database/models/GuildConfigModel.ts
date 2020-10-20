@@ -8,29 +8,27 @@ import { MatchKeysAndValues } from 'mongodb';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { Guild, Snowflake } from 'discord.js';
 
-const DEFAULT_CONFIG: MatchKeysAndValues<ArchGuild> = {
+const DEFAULT_CONFIG: MatchKeysAndValues<GuildConfig> = {
   prefix: 'a!',
 };
 
 @modelOptions({
   schemaOptions: {
-    collection: 'guilds',
+    collection: 'guild_config',
   },
 })
-export class ArchGuild extends Base<Snowflake> {
+export class GuildConfig extends Base<Snowflake> {
   @prop({
     match: /^\d+$/,
   })
   public _id!: Snowflake;
-  @prop({ required: true })
-  public name!: string;
   @prop({ default: 'a!', type: () => String })
   public prefix = 'a!';
   @prop({ default: 'en-US', type: () => String })
   public locale = 'en-US';
 
-  public static async findOrCreate(
-    this: ReturnModelType<typeof ArchGuild>,
+  public static findOrCreate(
+    this: ReturnModelType<typeof GuildConfig>,
     guild: Guild
   ) {
     return this.findOneAndUpdate(
@@ -38,7 +36,6 @@ export class ArchGuild extends Base<Snowflake> {
       {
         $set: {
           _id: guild.id,
-          name: guild.name,
         },
         $setOnInsert: DEFAULT_CONFIG,
       },
@@ -47,4 +44,4 @@ export class ArchGuild extends Base<Snowflake> {
   }
 }
 
-export const ArchGuildModel = getModelForClass(ArchGuild);
+export const GuildConfigModel = getModelForClass(GuildConfig);
