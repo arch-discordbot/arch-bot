@@ -9,6 +9,7 @@ import mongoose from 'mongoose';
 import * as config from './config';
 import { Env, ShardData } from './types';
 import { createShardLogger } from './utils/createLogger';
+import { initializeStructures } from './structures';
 
 const createHandlerEnvOptions = (
   env: Env,
@@ -46,6 +47,8 @@ const createArchBot = async (env: Env) => {
       useFindAndModify: false,
     }
   );
+
+  initializeStructures();
 
   const client = new AkairoClient({
     ownerID: config.bot.ownerId, //TODO: maybe fetch from database
