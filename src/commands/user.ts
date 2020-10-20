@@ -8,6 +8,7 @@ import {
 } from 'discord.js';
 import { inlineLists, stripIndents } from 'common-tags';
 import { formatDate } from '../utils/formatting';
+import { formatDistanceToNow } from 'date-fns';
 
 export default class UserCommand extends Command {
   constructor() {
@@ -66,7 +67,9 @@ export default class UserCommand extends Command {
       stripIndents(inlineLists`
         **ID:** ${targetUser.id}
         **Username:** ${targetUser.username}#${targetUser.discriminator}
-        **Creation date:** ${formatDate(targetUser.createdAt)}
+        **Creation date:** ${formatDate(
+          targetUser.createdAt
+        )} (${formatDistanceToNow(targetUser.createdAt, { addSuffix: true })})
         **Avatar URLs:** ${this.buildAvatarUrls(targetUser)}
       `)
     );
@@ -77,12 +80,17 @@ export default class UserCommand extends Command {
       if (target.guild.ownerID === target.id) {
         infos.push(`
           This user owns this guild.
-          **Creation date:** ${formatDate(target.guild.createdAt)}`);
-      } else {
+          **Creation date:** ${formatDate(
+            target.guild.createdAt
+          )} (${formatDistanceToNow(target.guild.createdAt)})`);
+      } else if (target.joinedAt) {
         infos.push(
           `**Join date:** ${formatDate(
             target.joinedAt!
-          )} (**#${this.calculatePosition(target, 'joinedTimestamp')}**)`
+          )} (**#${this.calculatePosition(
+            target,
+            'joinedTimestamp'
+          )}**) (${formatDistanceToNow(target.joinedAt)})`
         );
       }
 
@@ -98,7 +106,7 @@ export default class UserCommand extends Command {
           )} (**#${this.calculatePosition(
           target,
           'premiumSinceTimestamp'
-        )}**)`);
+        )}**) (${formatDistanceToNow(target.premiumSince)})`);
       }
 
       if (target.roles.cache.size > 0) {

@@ -8,6 +8,7 @@ import {
 } from 'discord.js';
 import { inlineLists, stripIndents } from 'common-tags';
 import { formatDate } from '../utils/formatting';
+import { formatDistanceToNow } from 'date-fns';
 
 export default class GuildCommand extends Command {
   constructor() {
@@ -46,7 +47,9 @@ export default class GuildCommand extends Command {
     infos.push(`
       **ID:** ${target.id}
       **Name:** ${target.name}
-      **Creation date:** ${formatDate(target.createdAt)}
+      **Creation date:** ${formatDate(target.createdAt)} (${formatDistanceToNow(
+      target.createdAt
+    )})
       **Region:** ${target.region.toUpperCase()}
       **Members:** ${this.calculateMemberCount(target)}`);
 
