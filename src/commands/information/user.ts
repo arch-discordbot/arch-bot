@@ -1,16 +1,11 @@
 import { Argument, Command } from 'discord-akairo';
-import {
-  Guild,
-  GuildMember,
-  ImageSize,
-  Message,
-  MessageEmbed,
-  User,
-} from 'discord.js';
+import { GuildMember, ImageSize, MessageEmbed, User } from 'discord.js';
 import { stripIndents } from 'common-tags';
 import { formatDate } from '../../utils/formatting';
 import { getEmbedColor } from '../../utils/embeds';
 import { formatDistanceToNow } from 'date-fns';
+import ArchGuild from '../../structures/ArchGuild';
+import ArchMessage from '../../structures/ArchMessage';
 
 export default class UserCommand extends Command {
   constructor() {
@@ -21,7 +16,7 @@ export default class UserCommand extends Command {
         {
           id: 'target',
           type: Argument.union('member', 'user', 'string'),
-          default: (message: Message) => message.member || message.author,
+          default: (message: ArchMessage) => message.member || message.author,
         },
         {
           id: 'targetGuild',
@@ -34,8 +29,8 @@ export default class UserCommand extends Command {
   }
 
   async exec(
-    message: Message,
-    args: { target: GuildMember | User | string; targetGuild: Guild | null }
+    message: ArchMessage,
+    args: { target: GuildMember | User | string; targetGuild: ArchGuild | null }
   ) {
     const { member, channel } = message;
     let { target, targetGuild } = args;

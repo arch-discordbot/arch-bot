@@ -1,5 +1,5 @@
 import { Command, Listener } from 'discord-akairo';
-import { Message } from 'discord.js';
+import ArchMessage from '../../structures/ArchMessage';
 
 export default class LoadListener extends Listener {
   constructor() {
@@ -9,7 +9,7 @@ export default class LoadListener extends Listener {
     });
   }
 
-  exec(_: Message, command: Command) {
+  exec(_: ArchMessage, command: Command) {
     this.client.logger.debug('Command "%s" was executed.', command.id);
   }
 }

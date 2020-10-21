@@ -1,6 +1,7 @@
 import { Command } from 'discord-akairo';
-import { Message, Role } from 'discord.js';
+import { Role } from 'discord.js';
 import { GuildConfigModel } from '../../database/models/GuildConfigModel';
+import ArchMessage from '../../structures/ArchMessage';
 
 export default class ConfigCommand extends Command {
   constructor() {
@@ -27,7 +28,7 @@ export default class ConfigCommand extends Command {
     });
   }
 
-  async exec(message: Message, args: { mutedRole: Role | null }) {
+  async exec(message: ArchMessage, args: { mutedRole: Role | null }) {
     const { guild } = message;
 
     if (!guild) {

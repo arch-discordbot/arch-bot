@@ -1,6 +1,7 @@
 import { Command } from 'discord-akairo';
-import { Message, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import { formatNumber } from '../../utils/formatting';
+import ArchMessage from '../../structures/ArchMessage';
 
 export default class PingCommand extends Command {
   constructor() {
@@ -9,7 +10,7 @@ export default class PingCommand extends Command {
     });
   }
 
-  async exec(message: Message) {
+  async exec(message: ArchMessage) {
     const pingMessage = await message.channel.send('Pinging...');
     const diff =
       (pingMessage.editedAt || pingMessage.createdAt).getTime() -

@@ -1,8 +1,9 @@
 import { Command } from 'discord-akairo';
-import { Client, Message, MessageEmbed } from 'discord.js';
+import { Client, MessageEmbed } from 'discord.js';
 import { formatDistanceToNow } from 'date-fns';
 import { formatDate, formatNumber } from '../../utils/formatting';
 import { env } from '../../config';
+import ArchMessage from '../../structures/ArchMessage';
 
 export default class StatsCommand extends Command {
   constructor() {
@@ -12,7 +13,7 @@ export default class StatsCommand extends Command {
     });
   }
 
-  async exec(message: Message) {
+  async exec(message: ArchMessage) {
     message.channel.send(await this.buildEmbed());
   }
 

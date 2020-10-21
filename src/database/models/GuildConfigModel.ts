@@ -6,7 +6,8 @@ import {
 } from '@typegoose/typegoose';
 import { MatchKeysAndValues } from 'mongodb';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import { Guild, Snowflake } from 'discord.js';
+import { Snowflake } from 'discord.js';
+import ArchGuild from '../../structures/ArchGuild';
 
 const DEFAULT_CONFIG: MatchKeysAndValues<GuildConfig> = {
   prefix: 'a!',
@@ -31,7 +32,7 @@ export class GuildConfig extends Base<Snowflake> {
 
   public static findOrCreate(
     this: ReturnModelType<typeof GuildConfig>,
-    guild: Guild
+    guild: ArchGuild
   ) {
     return this.findOneAndUpdate(
       { _id: guild.id },

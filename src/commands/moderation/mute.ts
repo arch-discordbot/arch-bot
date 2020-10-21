@@ -1,11 +1,12 @@
 import { Command } from 'discord-akairo';
-import { GuildMember, Message, User } from 'discord.js';
+import { GuildMember, User } from 'discord.js';
 import {
   Punishment,
   PunishmentModel,
   PunishmentType,
 } from '../../database/models/PunishmentModel';
 import { GuildConfigModel } from '../../database/models/GuildConfigModel';
+import ArchMessage from '../../structures/ArchMessage';
 
 export default class MuteCommand extends Command {
   constructor() {
@@ -31,7 +32,7 @@ export default class MuteCommand extends Command {
   }
 
   async exec(
-    message: Message,
+    message: ArchMessage,
     args: { target: GuildMember | User | string; reason: string }
   ) {
     const { guild, channel, member } = message;

@@ -1,6 +1,7 @@
 import { Argument, Command } from 'discord-akairo';
-import { Guild, Message } from 'discord.js';
 import { GuildConfigModel } from '../../database/models/GuildConfigModel';
+import ArchGuild from '../../structures/ArchGuild';
+import ArchMessage from '../../structures/ArchMessage';
 
 export default class GuildConfigCommand extends Command {
   constructor() {
@@ -10,7 +11,7 @@ export default class GuildConfigCommand extends Command {
         {
           id: 'target',
           type: Argument.union('guild', 'string'),
-          default: (message: Message) =>
+          default: (message: ArchMessage) =>
             message.channel.type === 'text' ? message.guild : null,
         },
       ],
@@ -18,14 +19,14 @@ export default class GuildConfigCommand extends Command {
     });
   }
 
-  async exec(message: Message, args: { target: Guild | string }) {
+  async exec(message: ArchMessage, args: { target: ArchGuild | string }) {
     const { target } = args;
 
     if (!target) {
       return;
     }
 
-    const guildId = target instanceof Guild ? target.id : target;
+    const guildId = target instanceof ArchGuild ? target.id : target;
     const config = await GuildConfigModel.findById(guildId);
 
     try {

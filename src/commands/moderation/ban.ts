@@ -1,5 +1,6 @@
 import { Argument, Command } from 'discord-akairo';
-import { GuildMember, Message, User } from 'discord.js';
+import { GuildMember, User } from 'discord.js';
+import ArchMessage from '../../structures/ArchMessage';
 
 export default class BanCommand extends Command {
   constructor() {
@@ -19,7 +20,7 @@ export default class BanCommand extends Command {
   }
 
   async exec(
-    message: Message,
+    message: ArchMessage,
     args: { target: GuildMember | User | string | null }
   ) {
     if (!message.guild || message.channel.type !== 'text') {

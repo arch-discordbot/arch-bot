@@ -1,6 +1,7 @@
 import { Argument, Command } from 'discord-akairo';
-import { GuildMember, Message, MessageEmbed, User } from 'discord.js';
+import { GuildMember, MessageEmbed, User } from 'discord.js';
 import { getEmbedColor } from '../../utils/embeds';
+import ArchMessage from '../../structures/ArchMessage';
 
 export default class AvatarCommand extends Command {
   constructor() {
@@ -11,13 +12,16 @@ export default class AvatarCommand extends Command {
         {
           id: 'target',
           type: Argument.union('member', 'user', 'string'),
-          default: (message: Message) => message.author,
+          default: (message: ArchMessage) => message.author,
         },
       ],
     });
   }
 
-  async exec(message: Message, args: { target: GuildMember | User | string }) {
+  async exec(
+    message: ArchMessage,
+    args: { target: GuildMember | User | string }
+  ) {
     if (!message.member || message.channel.type !== 'text') {
       return;
     }
