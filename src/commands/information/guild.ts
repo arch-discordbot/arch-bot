@@ -1,10 +1,11 @@
 import { Command } from 'discord-akairo';
-import { GuildMember, ImageSize, MessageEmbed } from 'discord.js';
+import { ImageSize, MessageEmbed } from 'discord.js';
 import { stripIndents } from 'common-tags';
 import { formatDate, formatNumber } from '../../utils/formatting';
 import { formatDistanceToNow } from 'date-fns';
 import ArchGuild from '../../structures/ArchGuild';
 import ArchMessage from '../../structures/ArchMessage';
+import ArchGuildMember from '../../structures/ArchGuildMember';
 
 export default class GuildCommand extends Command {
   constructor() {
@@ -40,7 +41,7 @@ export default class GuildCommand extends Command {
     );
   }
 
-  async buildEmbed(author: GuildMember, target: ArchGuild) {
+  async buildEmbed(author: ArchGuildMember, target: ArchGuild) {
     const embed = new MessageEmbed();
     embed.setTitle(target.name);
 

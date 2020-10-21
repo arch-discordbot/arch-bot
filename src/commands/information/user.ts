@@ -1,11 +1,12 @@
 import { Argument, Command } from 'discord-akairo';
-import { GuildMember, ImageSize, MessageEmbed, User } from 'discord.js';
+import { ImageSize, MessageEmbed, User } from 'discord.js';
 import { stripIndents } from 'common-tags';
 import { formatDate } from '../../utils/formatting';
 import { getEmbedColor } from '../../utils/embeds';
 import { formatDistanceToNow } from 'date-fns';
 import ArchGuild from '../../structures/ArchGuild';
 import ArchMessage from '../../structures/ArchMessage';
+import ArchGuildMember from '../../structures/ArchGuildMember';
 
 export default class UserCommand extends Command {
   constructor() {
@@ -30,7 +31,10 @@ export default class UserCommand extends Command {
 
   async exec(
     message: ArchMessage,
-    args: { target: GuildMember | User | string; targetGuild: ArchGuild | null }
+    args: {
+      target: ArchGuildMember | User | string;
+      targetGuild: ArchGuild | null;
+    }
   ) {
     const { member, channel } = message;
     let { target, targetGuild } = args;
@@ -63,8 +67,8 @@ export default class UserCommand extends Command {
     return channel.send(await this.buildEmbed(member, target));
   }
 
-  async buildEmbed(author: GuildMember, target: GuildMember | User) {
-    const targetUser = target instanceof GuildMember ? target.user : target;
+  async buildEmbed(author: ArchGuildMember, target: ArchGuildMember | User) {
+    const targetUser = target instanceof ArchGuildMember ? target.user : target;
     const embed = new MessageEmbed();
     embed.setColor(getEmbedColor(target, author.displayColor));
     embed.setThumbnail(
@@ -86,7 +90,7 @@ export default class UserCommand extends Command {
       `
     );
 
-    if (target instanceof GuildMember) {
+    if (target instanceof ArchGuildMember) {
       const infos: string[] = [];
 
       if (target.guild.ownerID === target.id) {
@@ -147,7 +151,7 @@ export default class UserCommand extends Command {
     );
   }
 
-  calculatePosition(member: GuildMember, property: keyof GuildMember) {
+  calculatePosition(member: ArchGuildMember, property: keyof ArchGuildMember) {
     return (
       member.guild.members.cache
         .filter((guildMember) => {

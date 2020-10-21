@@ -1,6 +1,7 @@
 import { Argument, Command } from 'discord-akairo';
-import { GuildMember, User } from 'discord.js';
+import { User } from 'discord.js';
 import ArchMessage from '../../structures/ArchMessage';
+import ArchGuildMember from '../../structures/ArchGuildMember';
 
 export default class BanCommand extends Command {
   constructor() {
@@ -21,7 +22,7 @@ export default class BanCommand extends Command {
 
   async exec(
     message: ArchMessage,
-    args: { target: GuildMember | User | string | null }
+    args: { target: ArchGuildMember | User | string | null }
   ) {
     if (!message.guild || message.channel.type !== 'text') {
       return;
@@ -42,7 +43,7 @@ export default class BanCommand extends Command {
       return channel.send('Please specify a target user.');
     }
 
-    if (target instanceof GuildMember) {
+    if (target instanceof ArchGuildMember) {
       if (!target.bannable) {
         return channel.send(
           "I don't have enough permissions to ban this guild member."

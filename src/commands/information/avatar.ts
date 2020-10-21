@@ -1,7 +1,8 @@
 import { Argument, Command } from 'discord-akairo';
-import { GuildMember, MessageEmbed, User } from 'discord.js';
+import { MessageEmbed, User } from 'discord.js';
 import { getEmbedColor } from '../../utils/embeds';
 import ArchMessage from '../../structures/ArchMessage';
+import ArchGuildMember from '../../structures/ArchGuildMember';
 
 export default class AvatarCommand extends Command {
   constructor() {
@@ -20,7 +21,7 @@ export default class AvatarCommand extends Command {
 
   async exec(
     message: ArchMessage,
-    args: { target: GuildMember | User | string }
+    args: { target: ArchGuildMember | User | string }
   ) {
     if (!message.member || message.channel.type !== 'text') {
       return;
@@ -36,8 +37,8 @@ export default class AvatarCommand extends Command {
     return channel.send(this.buildEmbed(member, args.target));
   }
 
-  buildEmbed(author: GuildMember, target: GuildMember | User) {
-    const user = target instanceof GuildMember ? target.user : target;
+  buildEmbed(author: ArchGuildMember, target: ArchGuildMember | User) {
+    const user = target instanceof ArchGuildMember ? target.user : target;
     const embed = new MessageEmbed();
     embed.setColor(getEmbedColor(target, author.displayColor));
     embed.setImage(

@@ -1,5 +1,5 @@
 import { Command } from 'discord-akairo';
-import { GuildMember, User } from 'discord.js';
+import { User } from 'discord.js';
 import {
   Punishment,
   PunishmentModel,
@@ -7,6 +7,7 @@ import {
 } from '../../database/models/PunishmentModel';
 import { GuildConfigModel } from '../../database/models/GuildConfigModel';
 import ArchMessage from '../../structures/ArchMessage';
+import ArchGuildMember from '../../structures/ArchGuildMember';
 
 export default class MuteCommand extends Command {
   constructor() {
@@ -33,7 +34,7 @@ export default class MuteCommand extends Command {
 
   async exec(
     message: ArchMessage,
-    args: { target: GuildMember | User | string; reason: string }
+    args: { target: ArchGuildMember | User | string; reason: string }
   ) {
     const { guild, channel, member } = message;
     const { target } = args;
@@ -51,7 +52,7 @@ export default class MuteCommand extends Command {
       return channel.send('Please specify a target user.');
     }
 
-    if (!(target instanceof GuildMember)) {
+    if (!(target instanceof ArchGuildMember)) {
       return channel.send('The informed user is not valid.');
     }
 
