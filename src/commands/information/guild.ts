@@ -16,20 +16,35 @@ export default class GuildCommand extends Command {
       aliases: ['guild', 'guildinfo'],
       channel: 'guild',
       typing: true,
+      args: [
+        {
+          id: 'targetGuild',
+          type: 'guild',
+          default: () => null,
+        },
+      ],
     });
   }
 
-  async exec(message: Message) {
-    if (!message.member || !message.guild || message.channel.type !== 'text') {
+  async exec(message: Message, args: { targetGuild: Guild | null }) {
+    const { member, guild, channel } = message;
+    const { targetGuild } = args;
+
+    if (
+      !member ||
+      !guild ||
+      message.channel.type !== 'text' ||
+      (targetGuild && !this.client.isOwner(member))
+    ) {
       return;
     }
 
-    return message.channel.send(
-      await this.buildEmbed(message.member, message.guild)
+    return channel.send(
+      await this.buildEmbed(member, targetGuild ? targetGuild : guild)
     );
   }
 
-  async buildEmbed(_author: GuildMember, target: Guild) {
+  async buildEmbed(author: GuildMember, target: Guild) {
     const embed = new MessageEmbed();
     embed.setTitle(target.name);
 
@@ -74,8 +89,10 @@ export default class GuildCommand extends Command {
     embed.setDescription(stripIndents(infos.join('')));
 
     if (target.roles.cache.size > 0) {
-      const roles = target.roles.cache.map((role) => role.toString());
-      embed.addField('Roles', roles.join());
+      const roles = target.roles.cache.map((role) =>
+        author.guild.id === target.id ? role.toString() : role.name
+      );
+      embed.addField('Roles', roles.join(', '));
     }
 
     return embed;
