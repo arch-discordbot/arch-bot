@@ -1,14 +1,10 @@
 import { Command } from 'discord-akairo';
-import {
-  Guild,
-  GuildMember,
-  ImageSize,
-  Message,
-  MessageEmbed,
-} from 'discord.js';
+import { GuildMember, ImageSize, MessageEmbed } from 'discord.js';
 import { stripIndents } from 'common-tags';
-import { formatDate } from '../../utils/formatting';
+import { formatDate, formatNumber } from '../../utils/formatting';
 import { formatDistanceToNow } from 'date-fns';
+import ArchGuild from '../../structures/ArchGuild';
+import ArchMessage from '../../structures/ArchMessage';
 
 export default class GuildCommand extends Command {
   constructor() {
@@ -26,7 +22,7 @@ export default class GuildCommand extends Command {
     });
   }
 
-  async exec(message: Message, args: { targetGuild: Guild | null }) {
+  async exec(message: ArchMessage, args: { targetGuild: ArchGuild | null }) {
     const { member, guild, channel } = message;
     const { targetGuild } = args;
 
@@ -44,7 +40,7 @@ export default class GuildCommand extends Command {
     );
   }
 
-  async buildEmbed(author: GuildMember, target: Guild) {
+  async buildEmbed(author: GuildMember, target: ArchGuild) {
     const embed = new MessageEmbed();
     embed.setTitle(target.name);
 
@@ -66,7 +62,7 @@ export default class GuildCommand extends Command {
       target.createdAt
     )})
       **Region:** ${target.region.toUpperCase()}
-      **Members:** ${this.calculateMemberCount(target)}`);
+      **Members:** ${formatNumber(target.memberCount)}`);
 
     if (target.icon) {
       infos.push(`
@@ -82,9 +78,9 @@ export default class GuildCommand extends Command {
     }
 
     infos.push(`
-      **Boost tier:** ${target.premiumTier}/3 (**${
+      **Boost tier:** ${target.premiumTier}/3 (**${formatNumber(
       target.premiumSubscriptionCount || 0
-    }**)`);
+    )}**)`);
 
     embed.setDescription(stripIndents(infos.join('')));
 
@@ -98,7 +94,7 @@ export default class GuildCommand extends Command {
     return embed;
   }
 
-  buildUrls(guild: Guild, property: 'iconURL' | 'bannerURL') {
+  buildUrls(guild: ArchGuild, property: 'iconURL' | 'bannerURL') {
     const sizes: ImageSize[] = [128, 256, 512, 1024, 2048, 4096];
     return sizes.map(
       (size) =>
@@ -108,9 +104,5 @@ export default class GuildCommand extends Command {
           format: 'png',
         })})]`
     );
-  }
-
-  calculateMemberCount(guild: Guild) {
-    return guild.memberCount;
   }
 }
