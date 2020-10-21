@@ -1,5 +1,6 @@
 import { Argument, Command } from 'discord-akairo';
 import {
+  Guild,
   GuildMember,
   ImageSize,
   Message,
@@ -22,25 +23,49 @@ export default class UserCommand extends Command {
           type: Argument.union('member', 'user', 'string'),
           default: (message: Message) => message.member || message.author,
         },
+        {
+          id: 'targetGuild',
+          type: 'guild',
+          default: () => null,
+        },
       ],
       typing: true,
     });
   }
 
-  async exec(message: Message, args: { target: GuildMember | User | string }) {
-    if (!message.member || message.channel.type !== 'text') {
+  async exec(
+    message: Message,
+    args: { target: GuildMember | User | string; targetGuild: Guild | null }
+  ) {
+    const { member, channel } = message;
+    let { target, targetGuild } = args;
+
+    if (
+      !member ||
+      channel.type !== 'text' ||
+      (targetGuild && !this.client.isOwner(member))
+    ) {
       return;
     }
 
-    const { channel } = message;
-    let { target } = args;
+    if (targetGuild) {
+      try {
+        target = await targetGuild.members.fetch({
+          user: target,
+          force: true,
+          cache: false,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
 
     // TODO: fetch not cached members/users.
     if (typeof target === 'string') {
       return channel.send('User not found.');
     }
 
-    return channel.send(await this.buildEmbed(message.member, target));
+    return channel.send(await this.buildEmbed(member, target));
   }
 
   async buildEmbed(author: GuildMember, target: GuildMember | User) {
@@ -102,7 +127,9 @@ export default class UserCommand extends Command {
       }
 
       if (target.roles.cache.size > 0) {
-        const roles = target.roles.cache.map((role) => role.toString());
+        const roles = target.roles.cache.map((role) =>
+          author.guild.id === target.guild.id ? role.toString() : role.name
+        );
         infos.push(`\n
           **Roles:** ${roles}`);
       }
