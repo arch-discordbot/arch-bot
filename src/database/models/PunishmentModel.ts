@@ -1,8 +1,4 @@
-import {
-  getModelForClass,
-  modelOptions,
-  prop,
-} from '@typegoose/typegoose';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { Snowflake } from 'discord.js';
 

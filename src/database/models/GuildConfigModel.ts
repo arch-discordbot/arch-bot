@@ -26,6 +26,8 @@ export class GuildConfig extends Base<Snowflake> {
   public prefix = 'a!';
   @prop({ default: 'en-US', type: () => String })
   public locale = 'en-US';
+  @prop({ type: () => String })
+  public mutedRole?: Snowflake;
 
   public static findOrCreate(
     this: ReturnModelType<typeof GuildConfig>,
