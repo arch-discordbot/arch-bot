@@ -13,6 +13,7 @@ export const env: Env =
 export const bot = {
   token: process.env.DISCORD_TOKEN,
   ownerId: process.env.OWNER_ID,
+  discordJsDebug: process.env.DISCORD_JS_DEBUG === 'true',
 };
 
 export const database = {
