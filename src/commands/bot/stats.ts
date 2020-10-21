@@ -1,5 +1,6 @@
 import { Command } from 'discord-akairo';
 import { Client, Message, MessageEmbed } from 'discord.js';
+import { formatDistanceToNow } from 'date-fns';
 import { formatDate, formatNumber } from '../../utils/formatting';
 import { env } from '../../config';
 
@@ -19,7 +20,11 @@ export default class StatsCommand extends Command {
     const embed = new MessageEmbed();
 
     if (this.client.readyAt) {
-      embed.setDescription(`Online since ${formatDate(this.client.readyAt)}`);
+      embed.setDescription(
+        `Online since ${formatDate(this.client.readyAt)} (${formatDistanceToNow(
+          this.client.readyAt
+        )})`
+      );
     }
 
     const commandsCount = this.client.commandHandler.modules.size;
