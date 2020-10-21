@@ -7,7 +7,7 @@ import {
   MessageEmbed,
   User,
 } from 'discord.js';
-import { inlineLists, stripIndents } from 'common-tags';
+import { stripIndents } from 'common-tags';
 import { formatDate } from '../../utils/formatting';
 import { getEmbedColor } from '../../utils/embeds';
 import { formatDistanceToNow } from 'date-fns';
@@ -81,14 +81,14 @@ export default class UserCommand extends Command {
 
     embed.addField(
       'Account information',
-      stripIndents(inlineLists`
+      stripIndents`
         **ID:** ${targetUser.id}
         **Username:** ${targetUser.username}#${targetUser.discriminator}
         **Creation date:** ${formatDate(
           targetUser.createdAt
         )} (${formatDistanceToNow(targetUser.createdAt, { addSuffix: true })})
-        **Avatar URLs:** ${this.buildAvatarUrls(targetUser)}
-      `)
+        **Avatar URLs:** ${this.buildAvatarUrls(targetUser).join(' ')}
+      `
     );
 
     if (target instanceof GuildMember) {
@@ -131,13 +131,10 @@ export default class UserCommand extends Command {
           author.guild.id === target.guild.id ? role.toString() : role.name
         );
         infos.push(`\n
-          **Roles:** ${roles}`);
+          **Roles:** ${roles.join(', ')}`);
       }
 
-      embed.addField(
-        'Guild member information',
-        stripIndents(inlineLists(infos.join('')))
-      );
+      embed.addField('Guild member information', stripIndents(infos.join('')));
     }
 
     return embed;
