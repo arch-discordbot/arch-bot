@@ -56,6 +56,10 @@ export default class MuteCommand extends Command {
       return channel.send('The informed user is not valid.');
     }
 
+    if (!target.manageable) {
+      return channel.send("I can't manage this user.");
+    }
+
     const guildConfig = await GuildConfigModel.findById(guild.id);
 
     if (!guildConfig || !guildConfig.mutedRole) {
