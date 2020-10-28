@@ -1,4 +1,4 @@
-import { Command } from 'discord-akairo';
+import { ArgumentOptions, Command } from 'discord-akairo';
 import { Role } from 'discord.js';
 import { GuildConfigModel } from '../../database/models/GuildConfigModel';
 import ArchMessage from '../../structures/ArchMessage';
@@ -9,16 +9,6 @@ export default class ConfigCommand extends Command {
       aliases: ['config'],
       channel: 'guild',
       userPermissions: ['MANAGE_GUILD'],
-      args: [
-        {
-          id: 'mutedRole',
-          type: 'roleMention',
-          prompt: {
-            start: 'What role should the mute command use to mute members?',
-            retry: 'Invalid role, try again.',
-          },
-        },
-      ],
       argumentDefaults: {
         prompt: {
           timeout: 'Time ran out, command has been cancelled.',
@@ -26,6 +16,30 @@ export default class ConfigCommand extends Command {
         },
       },
     });
+  }
+
+  *args() {
+    const args: Record<string, unknown> = {};
+
+    args.prefix = yield <ArgumentOptions>{
+      type: 'string',
+      prompt: {
+        start: 'What prefix should I listen for?',
+        retry: 'Invalid prefix, try again.',
+      }
+    };
+
+    args.mutedRole = yield <ArgumentOptions>{
+      type: 'roleMention',
+      prompt: {
+        start: 'What role should the mute command use to mute members?',
+        retry: 'Invalid role, try again.',
+      },
+    };
+
+    console.log(typeof args.prefix);
+
+    return args;
   }
 
   async exec(message: ArchMessage, args: { mutedRole: Role | null }) {
